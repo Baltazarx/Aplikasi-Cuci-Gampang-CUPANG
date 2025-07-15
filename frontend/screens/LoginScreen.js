@@ -10,14 +10,53 @@ import {
   Platform,
 } from 'react-native';
 import axios from 'axios';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { FontAwesome } from '@expo/vector-icons';
+
+WebBrowser.maybeCompleteAuthSession();
+
+const GOOGLE_WEB_CLIENT_ID = '629949434744-frmf71vh8cc8d7oe5be5lpf1r33f70hl.apps.googleusercontent.com';
+const GOOGLE_ANDROID_CLIENT_ID = '629949434744-rlusjbrlejtva63esct1ole1pklqrbbg.apps.googleusercontent.com';
+const GOOGLE_IOS_CLIENT_ID = 'GANTI_DENGAN_CLIENT_ID_IOS_ANDA.apps.googleusercontent.com';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: GOOGLE_WEB_CLIENT_ID,
+    androidClientId: GOOGLE_ANDROID_CLIENT_ID,
+    iosClientId: GOOGLE_IOS_CLIENT_ID,
+    webClientId: GOOGLE_WEB_CLIENT_ID,
+  });
+
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      sendGoogleTokenToBackend(authentication.idToken);
+    }
+  }, [response]);
+
+  const sendGoogleTokenToBackend = async (idToken) => {
+    try {
+      const backendResponse = await axios.post(
+        'http://192.168.1.14:5000/auth/google',
+        { idToken },
+        { withCredentials: true }
+      );
+
+      Alert.alert('Login Berhasil', backendResponse.data.message);
+      navigation.replace('Home');
+    } catch (error) {
+      console.error('Error sending Google token to backend:', error);
+      Alert.alert('Login Gagal', error.response?.data?.message || 'Terjadi kesalahan saat login dengan Google.');
+    }
+  };
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.18.118:5000/auth/login', {
+      const response = await axios.post('http://192.168.1.14:5000/auth/login', {
         email,
         password,
       });
@@ -59,8 +98,19 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.registerText}>Belum punya akun? Daftar di sini</Text>
+        <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.registerButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.googleLoginButton}
+          disabled={!request}
+          onPress={() => promptAsync()}
+        >
+          <View style={styles.iconButtonContent}>
+            <FontAwesome name="google" size={20} color="#fff" style={styles.icon} />
+            <Text style={styles.googleLoginButtonText}>Login with Google</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -110,17 +160,46 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 4, // Mengurangi jarak bawah
   },
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  registerText: {
-    color: '#1a73e8',
-    textAlign: 'center',
-    fontSize: 14,
+  googleLoginButton: {
+    backgroundColor: '#db4437',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 4, // Mengurangi jarak atas
+    marginBottom: 8, // Tetap 8 untuk memisahkan dari bottom of card
+  },
+  googleLoginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  iconButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    marginRight: 10,
+  },
+  registerButton: {
+    backgroundColor: '#34a853',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 4, // Mengurangi jarak atas
+    marginBottom: 4, // Mengurangi jarak bawah
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

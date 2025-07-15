@@ -25,9 +25,9 @@ const PaketCuciScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     try {
-      const paketResponse = await axios.get('http://192.168.18.118:5000/paket-cuci', { withCredentials: true });
-      const vehicleResponse = await axios.get('http://192.168.18.118:5000/users/kendaraan', { withCredentials: true });
-      const ratingSummaryResponse = await axios.get('http://192.168.18.118:5000/ratings/summary/paket', { withCredentials: true });
+      const paketResponse = await axios.get('http://192.168.1.14:5000/paket-cuci', { withCredentials: true });
+      const vehicleResponse = await axios.get('http://192.168.1.14:5000/users/kendaraan', { withCredentials: true });
+      const ratingSummaryResponse = await axios.get('http://192.168.1.14:5000/ratings/summary/paket', { withCredentials: true });
 
       setPaketCuci(paketResponse.data);
       setVehicles(vehicleResponse.data);
@@ -48,7 +48,7 @@ const PaketCuciScreen = ({ navigation }) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.18.118:5000/pesanan',
+        'http://192.168.1.14:5000/pesanan',
         {
           paket_cuci_id: selectedPaket,
           kendaraan_id: selectedVehicle,

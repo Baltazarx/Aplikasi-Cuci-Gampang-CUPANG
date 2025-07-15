@@ -1,5 +1,8 @@
 const connection = require('../config/db');
 const bcrypt = require('bcryptjs');
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // Pastikan ini diatur di .env
 
 module.exports = {
   register: async (req, res) => {
@@ -104,5 +107,63 @@ module.exports = {
       if (err) return res.status(500).send({ message: "Gagal ambil data rating", err });
       res.send(data);
     });
-  }
+  },
+
+  googleLogin: async (req, res) => {
+    const { idToken } = req.body;
+
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      const { email, name } = payload;
+
+      // Check if user exists in database
+      const sql = 'SELECT * FROM users WHERE email = ?';
+      connection.query(sql, [email], async (err, results) => {
+        if (err) {
+          console.error('❌ Error querying user for Google login:', err);
+          return res.status(500).json({ message: 'Server error during Google login' });
+        }
+
+        let user;
+        if (results.length > 0) {
+          // User exists, log them in
+          user = results[0];
+        } else {
+          // User does not exist, register them
+          const hashedPassword = await bcrypt.hash(email, 10); // Use email as a dummy password for Google users, or generate a random one
+          const insertSql = 'INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, ?)';
+          const insertValues = [name, email, hashedPassword, 'user']; // Default role 'user'
+
+          connection.query(insertSql, insertValues, (insertErr, insertResult) => {
+            if (insertErr) {
+              console.error('❌ Error registering new user via Google:', insertErr);
+              return res.status(500).json({ message: 'Failed to register user via Google' });
+            }
+            user = { id: insertResult.insertId, nama: name, email: email, role: 'user' };
+          });
+        }
+
+        // Create session for the user
+        req.session.user = {
+          id: user.id,
+          nama: user.nama,
+          email: user.email,
+          role: user.role,
+          alamat: user.alamat || null, // Alamat mungkin kosong untuk Google login
+        };
+
+        return res.status(200).json({
+          message: 'Login with Google successful',
+          user: { email: user.email, role: user.role },
+        });
+      });
+    } catch (error) {
+      console.error('❌ Google token verification failed:', error);
+      return res.status(401).json({ message: 'Invalid Google token' });
+    }
+  },
 };

@@ -21,7 +21,7 @@ const MyOrdersScreen = ({ navigation }) => {
 
   const fetchMyOrders = async () => {
     try {
-      const response = await axios.get('http://192.168.18.118:5000/pesanan/me', {
+      const response = await axios.get('http://192.168.1.14:5000/pesanan/me', {
         withCredentials: true,
       });
       setOrders(response.data);

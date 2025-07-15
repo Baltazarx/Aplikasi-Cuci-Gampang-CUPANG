@@ -24,7 +24,7 @@ const AdminOrdersScreen = ({ navigation }) => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://192.168.18.118:5000/admin/pesanan', { withCredentials: true });
+      const response = await axios.get('http://192.168.1.14:5000/admin/pesanan', { withCredentials: true });
       setOrders(response.data);
       setLoading(false);
     } catch (err) {
@@ -38,7 +38,7 @@ const AdminOrdersScreen = ({ navigation }) => {
   const handleUpdateStatus = async (id) => {
     try {
       await axios.put(
-        `http://192.168.18.118:5000/admin/pesanan/${id}/status`,
+        `http://192.168.1.14:5000/admin/pesanan/${id}/status`,
         { status: newStatus },
         { withCredentials: true }
       );
@@ -54,7 +54,7 @@ const AdminOrdersScreen = ({ navigation }) => {
 
   const handleDeleteOrder = async (id) => {
     try {
-      await axios.delete(`http://192.168.18.118:5000/admin/pesanan/${id}`, { withCredentials: true });
+      await axios.delete(`http://192.168.1.14:5000/admin/pesanan/${id}`, { withCredentials: true });
       Alert.alert('✅ Berhasil', 'Pesanan berhasil dihapus.');
       fetchOrders();
     } catch (error) {

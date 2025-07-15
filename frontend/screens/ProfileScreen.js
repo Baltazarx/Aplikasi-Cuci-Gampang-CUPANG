@@ -19,7 +19,7 @@ const ProfileScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('http://192.168.18.118:5000/users/me');
+        const response = await axios.get('http://192.168.1.14:5000/users/me');
         setNama(response.data.user.nama);
         setAlamat(response.data.user.alamat);
       } catch (error) {
@@ -32,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleUpdateProfile = async () => {
     try {
-      const response = await axios.put('http://192.168.18.118:5000/users/update-profile', {
+      const response = await axios.put('http://192.168.1.14:5000/users/update-profile', {
         nama,
         alamat,
       });

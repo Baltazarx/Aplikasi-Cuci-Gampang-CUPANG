@@ -58,5 +58,5 @@ app.get('/', (req, res) => {
 
 // 8️⃣ Jalankan server
 app.listen(port, () => {
-  console.log(`🚀 Backend jalan di http://192.168.18.118:${port}`);
+  console.log(`🚀 Backend jalan di http://192.168.1.14:${port}`);
 });

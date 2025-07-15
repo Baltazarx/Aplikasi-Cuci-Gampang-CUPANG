@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://192.168.18.118:5000/auth/me');
+        const response = await axios.get('http://192.168.1.14:5000/auth/me');
         setUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -21,7 +21,7 @@ const HomeScreen = ({ navigation }) => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://192.168.18.118:5000/auth/logout');
+      await axios.post('http://192.168.1.14:5000/auth/logout');
       Alert.alert('Logout Berhasil', 'Anda telah berhasil keluar.');
       navigation.replace('Login');
     } catch (error) {

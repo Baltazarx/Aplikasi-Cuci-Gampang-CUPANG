@@ -21,7 +21,7 @@ const AdminUsersScreen = ({ navigation }) => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://192.168.18.118:5000/admin/users', {
+      const response = await axios.get('http://192.168.1.14:5000/admin/users', {
         withCredentials: true,
       });
       setUsers(response.data);

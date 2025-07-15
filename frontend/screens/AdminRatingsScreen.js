@@ -21,7 +21,7 @@ const AdminRatingsScreen = ({ navigation }) => {
 
   const fetchRatings = async () => {
     try {
-      const response = await axios.get('http://192.168.18.118:5000/admin/ratings', {
+      const response = await axios.get('http://192.168.1.14:5000/admin/ratings', {
         withCredentials: true,
       });
       setRatings(response.data);

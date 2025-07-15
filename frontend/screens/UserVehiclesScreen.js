@@ -24,7 +24,7 @@ const UserVehiclesScreen = ({ navigation }) => {
 
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get('http://192.168.18.118:5000/users/kendaraan');
+      const response = await axios.get('http://192.168.1.14:5000/users/kendaraan');
       setVehicles(response.data);
     } catch (error) {
       console.error('Error fetching vehicles:', error);
@@ -34,7 +34,7 @@ const UserVehiclesScreen = ({ navigation }) => {
 
   const handleAddVehicle = async () => {
     try {
-      const response = await axios.post('http://192.168.18.118:5000/users/kendaraan', {
+      const response = await axios.post('http://192.168.1.14:5000/users/kendaraan', {
         merk,
         model,
         nomor_polisi: nomorPolisi,
@@ -60,7 +60,7 @@ const UserVehiclesScreen = ({ navigation }) => {
   const handleUpdateVehicle = async () => {
     try {
       const response = await axios.put(
-        `http://192.168.18.118:5000/users/kendaraan/${editingVehicleId}`,
+        `http://192.168.1.14:5000/users/kendaraan/${editingVehicleId}`,
         {
           merk,
           model,
@@ -79,7 +79,7 @@ const UserVehiclesScreen = ({ navigation }) => {
 
   const handleDeleteVehicle = async (id) => {
     try {
-      const response = await axios.delete(`http://192.168.18.118:5000/users/kendaraan/${id}`);
+      const response = await axios.delete(`http://192.168.1.14:5000/users/kendaraan/${id}`);
       Alert.alert('Berhasil', response.data.message || 'Kendaraan berhasil dihapus.');
       fetchVehicles();
     } catch (error) {

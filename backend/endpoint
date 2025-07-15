@@ -1,9 +1,0 @@
-GET
-http://localhost:3000/ratings/summary
-
-GET
-http://localhost:3000/ratings
-
-GET
-http://localhost:3000/ratings/:ID
-

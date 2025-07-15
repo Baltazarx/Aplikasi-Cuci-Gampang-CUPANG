@@ -17,7 +17,7 @@ const RatingScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await axios.post('http://192.168.18.118:5000/ratings', {
+      const response = await axios.post('http://192.168.1.14:5000/ratings', {
         pesanan_id: pesananId,
         rating: parseInt(rating),
         ulasan,
